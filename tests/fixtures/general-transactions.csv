@@ -1,0 +1,4 @@
+# Date,Description,Amount,Account,Transaction ID
+2025-01-01,Restaurant,-50.0,123456789,TXN001
+2025-01-02,Gas Station,-30.0,123456789,TXN002
+2025-01-03,Groceries,-120.0,123456789,TXN003
