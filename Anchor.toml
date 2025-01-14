@@ -1,0 +1,27 @@
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+araza = "AnymAL5sjUsgFVFabV2bs1cbMKVT45dcGHCaCUJB4RDg"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "bun run test"
+collect-fixtures = "bun run collect-fixtures"
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+[[test.validator.account]]
+# USDC
+address = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+filename = "tests/fixtures/usdc-mint.json"
