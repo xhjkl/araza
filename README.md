@@ -31,7 +31,7 @@ Then, with Phantom facing devnet, get yourself some mock USDC:
 
 After you have some mock USDC, you can deposit it into the protocol. Go here:
 
-  * https://araza.xyz
+  * https://araza.fly.dev/
 
 And follow the instructions on the page to deposit your USDC,
 or to redeem your ĐĐ back for USDC.
