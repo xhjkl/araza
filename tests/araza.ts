@@ -144,6 +144,7 @@ describe('araza', () => {
 			.accounts({
 				user: owner.publicKey,
 				fromAccount: ownersUsdcAccount,
+				// @ts-expect-error
 				toAccount: ownersDdAccount,
 				usdcMint,
 				tokenProgram: TOKEN_2022_PROGRAM_ID,
