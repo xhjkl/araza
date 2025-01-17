@@ -1,14 +1,16 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "types": ["mocha", "chai"],
-    "typeRoots": ["./node_modules/@types"],
-    "lib": ["ESNext"],
-    "module": "commonjs",
-    "target": "ESNext",
-    "esModuleInterop": true,
-    "paths": {
-      "@generated-types/*": ["./target/types/*"]
-    }
-  }
+	"compilerOptions": {
+		"strict": true,
+		"types": ["mocha", "chai"],
+		"typeRoots": ["./node_modules/@types"],
+		"lib": ["ESNext"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"target": "ESNext",
+		"esModuleInterop": true,
+		"baseUrl": ".",
+		"paths": {
+			"@generated-types/*": ["./target/types/*"]
+		}
+	}
 }

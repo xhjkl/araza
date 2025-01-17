@@ -9,9 +9,11 @@ import {
 } from '@solana/spl-token'
 import type { PublicKey } from '@solana/web3.js'
 
-import type { Araza } from '@generated-types/araza'
+import type { Araza } from '@generated-types/araza.js'
 
 import { expect } from 'chai'
+
+const BN = anchor.BN || anchor.default.BN
 
 /** Partially applied `confirmTransaction` for code brevity */
 const untilConfirmed = async (provider: anchor.AnchorProvider, tx: string) => {
@@ -140,7 +142,7 @@ describe('araza', () => {
 
 		// When we deposit some USDC:
 		const tx = await program.methods
-			.deposit(new anchor.BN(223_000000))
+			.deposit(new BN(223_000000))
 			.accounts({
 				user: owner.publicKey,
 				fromAccount: ownersUsdcAccount,
@@ -185,7 +187,7 @@ describe('araza', () => {
 
 		// When we withdraw some, but not all, DD:
 		const tx = await program.methods
-			.redeem(new anchor.BN(123_000000))
+			.redeem(new BN(123_000000))
 			.accounts({
 				user: owner.publicKey,
 				fromAccount: ownersDdAccount,
@@ -229,7 +231,7 @@ describe('araza', () => {
 			signature: tx,
 			pubkeys: { escrow },
 		} = await program.methods
-			.offerDd(new anchor.BN(100_000000))
+			.offerDd(new BN(100_000000))
 			.accounts({
 				user: owner.publicKey,
 				fromAccount: ownersDdAccount,
