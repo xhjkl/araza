@@ -1,15 +1,16 @@
-import { Connection } from '@solana/web3.js'
 import * as anchor from '@coral-xyz/anchor'
-
+import { Connection, PublicKey } from '@solana/web3.js'
 import {
 	getAssociatedTokenAddressSync,
 	TOKEN_PROGRAM_ID as tokenProgram,
 	ASSOCIATED_TOKEN_PROGRAM_ID as associatedTokenProgram,
 } from '@solana/spl-token'
-import { PublicKey } from '@solana/web3.js'
 
 import IDL from './araza.json'
 import type { Araza } from './araza.ts'
+
+const ddMint = new PublicKey('8qhVugtb715mhHALxQuu8mRHc5nDT5pt39qHHR5DkJpq')
+const usdcMint = new PublicKey('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr')
 
 let storedProgram: anchor.Program<Araza>
 const program = () => {
@@ -26,15 +27,25 @@ const program = () => {
 	return storedProgram
 }
 
-const ddMint = new PublicKey('8qhVugtb715mhHALxQuu8mRHc5nDT5pt39qHHR5DkJpq')
-const usdcMint = new PublicKey('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr')
+let connection: Connection | null = null
+export const untilFinalized = async (tx: string) => {
+	if (connection == null) {
+		connection = new Connection('https://api.devnet.solana.com', 'finalized')
+	}
+	const latestBlockhash = await connection.getLatestBlockhash()
+	await connection.confirmTransaction({
+		blockhash: latestBlockhash.blockhash,
+		lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+		signature: tx,
+	})
+}
 
 export const deposit = async (publicKey: PublicKey, amount: number) => {
 	const fromAccount = getAssociatedTokenAddressSync(usdcMint, publicKey)
 	const toAccount = getAssociatedTokenAddressSync(ddMint, publicKey)
 	// Oddly, without `ts-expect-error`'ed account below,
 	// Anchor will enter an infinite loop in release builds.
-	const all = await program()
+	return await program()
 		.methods.deposit(new anchor.BN(amount))
 		.accounts({
 			user: publicKey,
@@ -45,8 +56,7 @@ export const deposit = async (publicKey: PublicKey, amount: number) => {
 			tokenProgram,
 			associatedTokenProgram,
 		})
-		.rpcAndKeys()
-	console.log('all', all)
+		.rpc()
 }
 
 export const redeem = async (publicKey: PublicKey, amount: number) => {
@@ -54,7 +64,7 @@ export const redeem = async (publicKey: PublicKey, amount: number) => {
 	const toAccount = getAssociatedTokenAddressSync(usdcMint, publicKey)
 	// Oddly, without `ts-expect-error`'ed account below,
 	// Anchor will enter an infinite loop in release builds.
-	await program()
+	return await program()
 		.methods.redeem(new anchor.BN(amount))
 		.accounts({
 			user: publicKey,
@@ -70,7 +80,7 @@ export const redeem = async (publicKey: PublicKey, amount: number) => {
 
 export const offerDd = async (publicKey: PublicKey, amount: number) => {
 	const fromAccount = getAssociatedTokenAddressSync(ddMint, publicKey)
-	await program()
+	return await program()
 		.methods.offerDd(new anchor.BN(amount))
 		.accounts({
 			user: publicKey,
@@ -81,7 +91,7 @@ export const offerDd = async (publicKey: PublicKey, amount: number) => {
 }
 
 export const offerFiat = async (publicKey: PublicKey, amount: number) => {
-	await program()
+	return await program()
 		.methods.offerFiat(new anchor.BN(amount))
 		.accounts({
 			user: publicKey,
