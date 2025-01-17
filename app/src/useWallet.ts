@@ -1,36 +1,32 @@
-import { createSignal } from 'solid-js'
+import { createSignal, createMemo } from 'solid-js'
 
 /** A hook to manage the wallet and public key. */
 const useWallet = () => {
-	const initialWallet = self.phantom?.solana ?? null
-	const initialPublicKey = initialWallet?.publicKey?.toString() ?? null
-	const [wallet, setWallet] = createSignal(initialWallet as unknown)
-	const [publicKey, setPublicKey] = createSignal(
-		initialPublicKey as string | null,
+	const [wallet, setWallet] = createSignal(
+		self.phantom?.solana ?? null,
+		// Every `setWallet` call should trigger a refresh of its dependents,
+		// so we don't want to compare the wallet object by reference.
+		{
+			equals: false,
+		},
 	)
+	const publicKey = createMemo(() => wallet()?.publicKey?.toString() ?? null)
 
 	const connect = async () => {
-		const phantom = self.phantom
-		if (!phantom) {
+		if (!self.phantom) {
 			return
 		}
-		// biome-ignore lint/style/noNonNullAssertion: guaranteed to be there
-		const response = await phantom.solana!.connect()
-		setWallet(phantom)
-		setPublicKey(response.publicKey.toString())
-		// biome-ignore lint/style/noNonNullAssertion: checked above
-		phantom.solana!.on('disconnect', () => {
+		await self.phantom.solana?.connect()
+		setWallet(self.phantom?.solana ?? null)
+		self.phantom.solana?.on('disconnect', () => {
 			setWallet(null)
-			setPublicKey(null)
 		})
 	}
 
 	const disconnect = async () => {
 		if (self.phantom) {
-			// biome-ignore lint/style/noNonNullAssertion: guaranteed to be there
-			await self.phantom.solana!.disconnect()
+			await self.phantom.solana?.disconnect()
 			setWallet(null)
-			setPublicKey(null)
 		}
 	}
 
