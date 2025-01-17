@@ -176,12 +176,16 @@ pub mod araza {
             CpiContext::new_with_signer(
                 ctx.accounts.token_program.to_account_info(),
                 TransferChecked {
-                    authority: ctx.accounts.dd_mint.to_account_info(),
+                    authority: ctx.accounts.escrow.to_account_info(),
                     mint: ctx.accounts.dd_mint.to_account_info(),
                     from: ctx.accounts.escrow.to_account_info(),
                     to: ctx.accounts.beneficiary.to_account_info(),
                 },
-                &[&[b"mint/dd", &[ctx.bumps.dd_mint]]],
+                &[&[
+                    b"escrow",
+                    ctx.accounts.user.key().as_ref(),
+                    &[ctx.bumps.escrow],
+                ]],
             ),
             ctx.accounts.escrow.amount,
             ctx.accounts.dd_mint.decimals,
@@ -191,11 +195,15 @@ pub mod araza {
         close_account(CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             CloseAccount {
-                authority: ctx.accounts.dd_mint.to_account_info(),
+                authority: ctx.accounts.escrow.to_account_info(),
                 account: ctx.accounts.escrow.to_account_info(),
                 destination: ctx.accounts.beneficiary.to_account_info(),
             },
-            &[&[b"mint/dd", &[ctx.bumps.dd_mint]]],
+            &[&[
+                b"escrow",
+                ctx.accounts.user.key().as_ref(),
+                &[ctx.bumps.escrow],
+            ]],
         ))?;
 
         Ok(())
@@ -374,7 +382,7 @@ pub struct OfferDD<'info> {
         init,
         payer = user,
         token::mint = dd_mint,
-        token::authority = dd_mint,
+        token::authority = escrow,
         seeds = [b"escrow", user.key().as_ref()],
         bump,
     )]
@@ -410,7 +418,7 @@ pub struct ReleaseFunds<'info> {
     #[account(
         mut,
         token::mint = dd_mint,
-        token::authority = dd_mint,
+        token::authority = escrow,
         seeds = [b"escrow", user.key().as_ref()],
         bump,
     )]
