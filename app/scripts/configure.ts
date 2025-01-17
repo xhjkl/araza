@@ -16,9 +16,7 @@ const main = async () => {
 			signer: provider.wallet.publicKey,
 			// Devnet USDC:
 			// [https://spl-token-faucet.com/?token-name=USDC-Dev]
-			usdcMint: new PublicKey(
-				'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr',
-			),
+			usdcMint: new PublicKey('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
 			// Classic token program:
 			tokenProgram: TOKEN_PROGRAM_ID,
 		})
