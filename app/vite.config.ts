@@ -1,16 +1,18 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
-	plugins: [solid()],
-	optimizeDeps: {
-		esbuildOptions: {
-			define: {
-				global: 'globalThis',
+	plugins: [
+		solid(),
+		nodePolyfills({
+			globals: {
+				Buffer: true,
 			},
-			plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
-		},
+		}),
+	],
+	optimizeDeps: {
+		esbuildOptions: {},
 	},
 })
