@@ -1,6 +1,8 @@
 import { Connection, PublicKey } from '@solana/web3.js'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
+import IDL from '@generated-types/araza.json'
+
 const MINT_ADDRESSES_OF_TOKEN: { [key: string]: string } = {
 	// https://spl-token-faucet.com/?token-name=USDC-Dev
 	usdc: 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr',
@@ -17,12 +19,24 @@ export const getAllBalances = async (
 	publicKeyString: string,
 ): Promise<{ [key: string]: number }> => {
 	try {
-		const connection = new Connection('https://api.devnet.solana.com') // Change to your desired network
+		const connection = new Connection('https://api.devnet.solana.com')
 		const publicKey = new PublicKey(publicKeyString)
 
 		// Fetch native SOL balance
 		const solBalanceLamports = await connection.getBalance(publicKey)
-		const solBalance = solBalanceLamports / 1e9 // Convert lamports to SOL
+		const solBalance = solBalanceLamports / 1e9
+
+		// Fetch outstanding offer
+		const [ddEscrowAddress, _] = PublicKey.findProgramAddressSync(
+			[Buffer.from('escrow'), publicKey.toBuffer()],
+			new PublicKey(IDL.address),
+		)
+		let ddEscrowBalance = 0
+		try {
+			const balanceResult =
+				await connection.getTokenAccountBalance(ddEscrowAddress)
+			ddEscrowBalance = balanceResult.value.uiAmount || 0
+		} catch (error) {}
 
 		// Fetch all token accounts by owner
 		const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
@@ -51,14 +65,16 @@ export const getAllBalances = async (
 
 		return {
 			sol: solBalance,
+			ddEscrow: ddEscrowBalance,
 			...tokens,
 		}
 	} catch (error) {
-		console.error('Error fetching balances:', error)
+		console.error('While fetching balances:', error)
 		return {
 			sol: 0,
 			usdc: 0,
 			dd: 0,
+			ddEscrow: 0,
 		}
 	}
 }

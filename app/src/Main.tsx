@@ -1,8 +1,6 @@
 import { Match, Switch } from 'solid-js'
 
 import useWallet from './useWallet'
-import { getAllBalances } from './getBalances'
-import { deposit, redeem } from './transactions'
 
 import Dashboard from './Dashboard'
 import Welcome from './Welcome'
