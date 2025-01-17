@@ -16,6 +16,10 @@
 		"jsx": "preserve",
 		"jsxImportSource": "solid-js",
 		"incremental": true,
+		"baseUrl": "..",
+		"paths": {
+			"@generated-types/*": ["./target/types/*", "./target/idl/*"]
+		},
 
 		/* Linting */
 		"strict": true,
