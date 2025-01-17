@@ -6,8 +6,8 @@ import {
 	ASSOCIATED_TOKEN_PROGRAM_ID as associatedTokenProgram,
 } from '@solana/spl-token'
 
-import IDL from './araza.json'
-import type { Araza } from './araza.ts'
+import IDL from '@generated-types/araza.json'
+import type { Araza } from '@generated-types/araza'
 
 const ddMint = new PublicKey('8qhVugtb715mhHALxQuu8mRHc5nDT5pt39qHHR5DkJpq')
 const usdcMint = new PublicKey('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr')
