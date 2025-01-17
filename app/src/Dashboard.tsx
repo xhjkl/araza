@@ -9,7 +9,7 @@ import {
 import { PublicKey } from '@solana/web3.js'
 
 import { getAllBalances } from './getBalances'
-import { deposit, redeem, untilFinalized } from './transactions'
+import { deposit, offerDd, redeem, untilFinalized } from './transactions'
 
 const Actions = (args: {
 	publicKey: string
@@ -18,7 +18,7 @@ const Actions = (args: {
 	refetchBalances: () => void
 }) => {
 	/** Lock the interface for the duration of `action`. */
-	const doAction = async (action: () => Promise<string>) => {
+	const doAndWait = async (action: () => Promise<string>) => {
 		const tx = await action()
 		args.setPendingTx(tx)
 		await untilFinalized(tx)
@@ -32,7 +32,7 @@ const Actions = (args: {
 					<button
 						type="button"
 						onClick={async () => {
-							await doAction(() =>
+							await doAndWait(() =>
 								deposit(new PublicKey(args.publicKey), 100_000000),
 							)
 						}}
@@ -42,18 +42,17 @@ const Actions = (args: {
 					<button
 						type="button"
 						onClick={async () => {
-							await doAction(() =>
+							await doAndWait(() =>
 								redeem(new PublicKey(args.publicKey), 100_000000),
 							)
 						}}
 					>
 						ĐĐ → USDC
 					</button>
-				</div>
-			</div>
-			<div class="card">
-				<div class="button-container">
-					<button type="button" onClick={() => alert('Buy ĐĐ for USDC')}>
+					<button
+						type="button"
+						onClick={() => offerDd(new PublicKey(args.publicKey), 100_000000)}
+					>
 						ĐĐ → Fiat
 					</button>
 					<button type="button" onClick={() => alert('Sell ĐĐ for USDC')}>
@@ -83,10 +82,10 @@ const Balances = (args: {
 			<span>Your ĐĐ balance is</span>
 			<b>{args.balances()?.dd ?? 0.0}</b>
 		</p>
-		<Show when={true}>
+		<Show when={(args.balances()?.ddEscrow ?? 0) > 0}>
 			<p class="ticker">
 				<span>Your ĐĐ offer is</span>
-				<b>{0.0}</b>
+				<b>{args.balances()?.ddEscrow ?? 0.0}</b>
 			</p>
 		</Show>
 		<Show when={args.canRefresh}>
@@ -132,7 +131,9 @@ const Dashboard = ({ publicKey }: { publicKey: string }) => {
 				when={pendingTx() == null}
 				fallback={
 					<p style={{ 'font-style': 'oblique' }}>
-						Waiting for <code>{pendingTx()}</code> to confirm...
+						Waiting for confirmation...
+						<br />
+						<code>{pendingTx()}</code>
 					</p>
 				}
 			>
