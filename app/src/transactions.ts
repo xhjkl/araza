@@ -4,6 +4,7 @@ import * as anchor from '@coral-xyz/anchor'
 import {
 	getAssociatedTokenAddressSync,
 	TOKEN_PROGRAM_ID as tokenProgram,
+	ASSOCIATED_TOKEN_PROGRAM_ID as associatedTokenProgram,
 } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 
@@ -31,7 +32,9 @@ const usdcMint = new PublicKey('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr')
 export const deposit = async (publicKey: PublicKey, amount: number) => {
 	const fromAccount = getAssociatedTokenAddressSync(usdcMint, publicKey)
 	const toAccount = getAssociatedTokenAddressSync(ddMint, publicKey)
-	await program()
+	// Oddly, without `ts-expect-error`'ed account below,
+	// Anchor will enter an infinite loop in release builds.
+	const all = await program()
 		.methods.deposit(new anchor.BN(amount))
 		.accounts({
 			user: publicKey,
@@ -40,13 +43,17 @@ export const deposit = async (publicKey: PublicKey, amount: number) => {
 			toAccount,
 			usdcMint,
 			tokenProgram,
+			associatedTokenProgram,
 		})
-		.rpc()
+		.rpcAndKeys()
+	console.log('all', all)
 }
 
 export const redeem = async (publicKey: PublicKey, amount: number) => {
 	const fromAccount = getAssociatedTokenAddressSync(ddMint, publicKey)
 	const toAccount = getAssociatedTokenAddressSync(usdcMint, publicKey)
+	// Oddly, without `ts-expect-error`'ed account below,
+	// Anchor will enter an infinite loop in release builds.
 	await program()
 		.methods.redeem(new anchor.BN(amount))
 		.accounts({
@@ -55,6 +62,8 @@ export const redeem = async (publicKey: PublicKey, amount: number) => {
 			toAccount,
 			usdcMint,
 			tokenProgram,
+			// @ts-expect-error
+			associatedTokenProgram,
 		})
 		.rpc()
 }
