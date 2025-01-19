@@ -1,4 +1,5 @@
 import { Match, Switch } from 'solid-js'
+import type { PublicKey } from '@solana/web3.js'
 
 import useWallet from './useWallet'
 
@@ -32,6 +33,7 @@ declare global {
 
 	interface StringConvertible {
 		toString: () => string
+		toBase58: () => string
 	}
 
 	interface Phantom {
@@ -39,14 +41,16 @@ declare global {
 		publicKey: StringConvertible
 		connect: () => Promise<{ publicKey: StringConvertible }>
 		disconnect: () => Promise<void>
+		signMessage: (
+			message: Uint8Array,
+		) => Promise<{ publicKey: PublicKey; signature: Uint8Array }>
 		signTransaction: (transaction: unknown) => Promise<Serializable>
 		signAndSendTransaction: (transaction: unknown) => Promise<Serializable>
 		on: (event: string, callback: () => void) => void
 	}
 
 	interface Window {
-		// biome-ignore lint/suspicious/noConfusingVoidType: it's fine
-		phantom: { solana: Phantom | void } | void
+		phantom?: { solana?: Phantom }
 	}
 }
 

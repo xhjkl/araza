@@ -1,15 +1,20 @@
+import { PublicKey } from '@solana/web3.js'
 import {
 	createResource,
 	createSignal,
 	Suspense,
 	Show,
-	type Resource,
 	type Accessor,
 } from 'solid-js'
-import { PublicKey } from '@solana/web3.js'
 
 import { getAllBalances } from './getBalances'
-import { deposit, offerDd, redeem, untilFinalized } from './transactions'
+import {
+	deposit,
+	offerDd,
+	offerFiat,
+	redeem,
+	untilFinalized,
+} from './transactions'
 
 const Actions = (args: {
 	publicKey: string
@@ -18,78 +23,94 @@ const Actions = (args: {
 	refetchBalances: () => void
 }) => {
 	/** Lock the interface for the duration of `action`. */
-	const doAndWait = async (action: () => Promise<string>) => {
+	const doAndWait = async (action: () => Promise<string | null>) => {
 		const tx = await action()
+		if (!tx) {
+			return
+		}
 		args.setPendingTx(tx)
 		await untilFinalized(tx)
 		args.setPendingTx(null)
 		args.refetchBalances()
 	}
 	return (
-		<>
-			<div class="card">
-				<div class="button-container">
-					<button
-						type="button"
-						onClick={async () => {
-							await doAndWait(() =>
-								deposit(new PublicKey(args.publicKey), 100_000000),
-							)
-						}}
-					>
-						USDC → ĐĐ
-					</button>
-					<button
-						type="button"
-						onClick={async () => {
-							await doAndWait(() =>
-								redeem(new PublicKey(args.publicKey), 100_000000),
-							)
-						}}
-					>
-						ĐĐ → USDC
-					</button>
-					<button
-						type="button"
-						onClick={() => offerDd(new PublicKey(args.publicKey), 100_000000)}
-					>
-						ĐĐ → Fiat
-					</button>
-					<button type="button" onClick={() => alert('Sell ĐĐ for USDC')}>
-						Fiat → ĐĐ
-					</button>
-				</div>
+		<div class="card">
+			<div class="button-container">
+				<button
+					type="button"
+					onClick={async () => {
+						await doAndWait(() =>
+							deposit(new PublicKey(args.publicKey), 100_000000n),
+						)
+					}}
+				>
+					USDC → ĐĐ
+				</button>
+				<button
+					type="button"
+					onClick={async () => {
+						await doAndWait(() =>
+							redeem(new PublicKey(args.publicKey), 100_000000n),
+						)
+					}}
+				>
+					ĐĐ → USDC
+				</button>
+				<button
+					type="button"
+					onClick={async () => {
+						await doAndWait(() =>
+							offerDd(new PublicKey(args.publicKey), 100_000000n, '987654321'),
+						)
+					}}
+				>
+					ĐĐ → Fiat
+				</button>
+				<button
+					type="button"
+					onClick={async () => {
+						await doAndWait(() =>
+							offerFiat(
+								new PublicKey(args.publicKey),
+								100_000000n,
+								'123456789',
+							),
+						)
+					}}
+				>
+					Fiat → ĐĐ
+				</button>
 			</div>
-		</>
+		</div>
 	)
 }
 
 const Balances = (args: {
-	balances: Resource<{ [key: string]: number }>
+	balances: { [key: string]: number }
 	canRefresh: boolean
-	refetch: () => void
+	onRefresh: () => void
 }) => (
 	<>
 		<p class="ticker">
 			<span>Your SOL balance is</span>
-			<b>{args.balances()?.sol ?? 0.0}</b>
+			<b>{args.balances.sol ?? 0.0}</b>
 		</p>
 		<p class="ticker">
 			<span>Your USDC balance is</span>
-			<b>{args.balances()?.usdc ?? 0.0}</b>
+			<b>{args.balances.usdc ?? 0.0}</b>
 		</p>
 		<p class="ticker">
 			<span>Your ĐĐ balance is</span>
-			<b>{args.balances()?.dd ?? 0.0}</b>
+			<b>{args.balances.dd ?? 0.0}</b>
 		</p>
-		<Show when={(args.balances()?.ddEscrow ?? 0) > 0}>
+		<Show when={(args.balances.ddEscrow ?? 0) > 0}>
 			<p class="ticker">
 				<span>Your ĐĐ offer is</span>
-				<b>{args.balances()?.ddEscrow ?? 0.0}</b>
+				<b>{args.balances.ddEscrow ?? 0.0}</b>
 			</p>
 		</Show>
 		<Show when={args.canRefresh}>
-			<button type="button" onClick={args.refetch}>
+			<button type="button" onClick={args.onRefresh}>
 				Refresh
 			</button>
 		</Show>
@@ -120,9 +141,9 @@ const Dashboard = ({ publicKey }: { publicKey: string }) => {
 				<div style={{ height: '160px' }}>
 					<Suspense fallback={<p>Loading...</p>}>
 						<Balances
-							balances={balances}
+							balances={balances() ?? {}}
 							canRefresh={pendingTx() == null}
-							refetch={refetch}
+							onRefresh={refetch}
 						/>
 					</Suspense>
 				</div>
