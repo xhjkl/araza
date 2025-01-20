@@ -127,7 +127,7 @@ export const offerDd = async (
 	await fetch('/offer-dd', {
 		method: 'POST',
 		body: JSON.stringify({
-			amount,
+			amount: `${amount}`,
 			bankAccount,
 			publicKey: publicKey.toBase58(),
 			signature,
@@ -157,7 +157,7 @@ export const offerFiat = async (
 	await fetch('/offer-fiat', {
 		method: 'POST',
 		body: JSON.stringify({
-			amount,
+			amount: `${amount}`,
 			bankAccount,
 			publicKey: publicKey.toBase58(),
 			signature,
