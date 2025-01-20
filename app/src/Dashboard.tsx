@@ -165,6 +165,9 @@ const Dashboard = ({ publicKey }: { publicKey: string }) => {
 					refetchBalances={refetch}
 				/>
 			</Show>
+			<Show when={(balances()?.ddEscrow ?? 0) > 0}>
+				<a href="/?cabinet=[]">Cabinet</a>
+			</Show>
 		</div>
 	)
 }
