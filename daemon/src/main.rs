@@ -161,6 +161,11 @@ async fn main() -> std::io::Result<()> {
         cron::run(conf, also_pool).await;
     });
 
+    let port = env::var("PORT")
+        .ok()
+        .and_then(|p| p.parse().ok())
+        .unwrap_or(8080);
+
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
@@ -172,7 +177,7 @@ async fn main() -> std::io::Result<()> {
             .route("/readout", web::post().to(readout))
             .default_service(actix_files::Files::new("/", "./dist").index_file("index.html"))
     })
-    .bind(("127.0.0.1", 8080))
+    .bind(("0.0.0.0", port))
     .unwrap()
     .run()
     .await
