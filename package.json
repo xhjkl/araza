@@ -5,8 +5,8 @@
 		"lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
 		"lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
 		"test": "mocha --require dotenv/config --require ts-node/register \"tests/**/*.ts\"",
-		"program:initialize": "cd app && bun run program:initialize",
-		"program:configure": "cd app && bun run program:configure"
+		"program:initialize": "bun run app/scripts/initialize.ts",
+		"program:configure": "bun run app/scripts/configure.ts"
 	},
 	"dependencies": {
 		"@coral-xyz/anchor": "0.30.1",
