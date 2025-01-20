@@ -4,6 +4,10 @@ use dotenvy::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 
+use sqlx::migrate::Migrator;
+
+static MIGRATOR: Migrator = sqlx::migrate!();
+
 mod conf;
 
 mod cron;
@@ -150,6 +154,7 @@ async fn main() -> std::io::Result<()> {
         .connect(&database_url)
         .await
         .expect("Could not connect to the database");
+    MIGRATOR.run(&pool).await.unwrap();
 
     let also_pool = Clone::clone(&pool);
     actix_rt::spawn(async move {
