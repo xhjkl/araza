@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                    UPDATE match SET buyer_sent_fiat = TRUE WHERE id = $1\n                    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "8d72df00144bcfd01bf2d4f1e8aa86ef189fc31030a6ef0c858e980911a4ddb3"
+}

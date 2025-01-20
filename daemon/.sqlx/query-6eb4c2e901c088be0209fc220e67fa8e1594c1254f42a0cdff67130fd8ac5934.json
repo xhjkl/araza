@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO offer (amount, bank_account, public_key, direction) VALUES ($1, $2, $3, 'dd_to_fiat')",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Numeric",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6eb4c2e901c088be0209fc220e67fa8e1594c1254f42a0cdff67130fd8ac5934"
+}

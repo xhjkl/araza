@@ -1,0 +1,54 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id, bank_account, public_key, amount, direction as \"direction: OfferDirection\" FROM offer",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "bank_account",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "public_key",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "amount",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 4,
+        "name": "direction: OfferDirection",
+        "type_info": {
+          "Custom": {
+            "name": "offer_direction",
+            "kind": {
+              "Enum": [
+                "dd_to_fiat",
+                "fiat_to_dd"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "4b515a1f60aa45a98955f9ea5eb85a27960c0be25d5eae3f9d88da99c1093315"
+}

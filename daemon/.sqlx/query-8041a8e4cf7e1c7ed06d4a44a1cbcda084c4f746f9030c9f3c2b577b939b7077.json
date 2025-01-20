@@ -1,0 +1,44 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            match.id as match_id,\n            match.onramp_offer_id,\n            match.offramp_offer_id,\n            bid.public_key as onramp_public_key,\n            ask.public_key as offramp_public_key\n        FROM\n            match\n        JOIN\n            offer bid ON match.onramp_offer_id = bid.id\n        JOIN\n            offer ask ON match.offramp_offer_id = ask.id\n        WHERE\n            match.buyer_sent_fiat = TRUE AND match.seller_received_fiat = TRUE\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "match_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "onramp_offer_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
+        "name": "offramp_offer_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 3,
+        "name": "onramp_public_key",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "offramp_public_key",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "8041a8e4cf7e1c7ed06d4a44a1cbcda084c4f746f9030c9f3c2b577b939b7077"
+}

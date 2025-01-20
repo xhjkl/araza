@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                match.id as match_id,\n                bid.bank_account as onramp_bank_account,\n                ask.bank_account as offramp_bank_account\n            FROM\n                match\n            JOIN\n                offer bid ON match.onramp_offer_id = bid.id\n            JOIN\n                offer ask ON match.offramp_offer_id = ask.id\n            WHERE\n                bid.bank_account = $1 OR ask.bank_account = $1\n                AND\n                bid.bank_account = $2 OR ask.bank_account = $2\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "match_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "onramp_bank_account",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "offramp_bank_account",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "a2d75b310a19b799ee4f5a20c641173a0b0c13e7bdd069232dd4edbb82f3615f"
+}

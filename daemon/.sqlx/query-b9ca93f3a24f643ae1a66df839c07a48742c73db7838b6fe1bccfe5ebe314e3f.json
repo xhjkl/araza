@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO match (onramp_offer_id, offramp_offer_id) VALUES ($1, $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b9ca93f3a24f643ae1a66df839c07a48742c73db7838b6fe1bccfe5ebe314e3f"
+}

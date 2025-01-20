@@ -1,0 +1,26 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id, amount FROM offer WHERE direction = 'fiat_to_dd' AND id NOT IN (SELECT onramp_offer_id FROM match)",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "amount",
+        "type_info": "Numeric"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "503e344cb92b886d6c35b94a2bc26c8392e4e22e9b03d8d01c8bb637d56344b9"
+}
