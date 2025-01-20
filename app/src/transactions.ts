@@ -126,6 +126,9 @@ export const offerDd = async (
 	}
 	await fetch('/offer-dd', {
 		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
 		body: JSON.stringify({
 			amount: `${amount}`,
 			bankAccount,
@@ -156,6 +159,9 @@ export const offerFiat = async (
 	}
 	await fetch('/offer-fiat', {
 		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
 		body: JSON.stringify({
 			amount: `${amount}`,
 			bankAccount,
